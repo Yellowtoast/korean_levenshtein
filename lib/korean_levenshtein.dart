@@ -4,8 +4,30 @@ import 'package:korean_levenshtein/phoneme_cost.dart';
 
 part 'korean_jamo_info.dart';
 
+class SpecialCharToSpeech {
+  final String specialChar;
+  final String speech;
+
+  const SpecialCharToSpeech({required this.specialChar, required this.speech});
+
+  Map<String, dynamic> toMap() => {
+        specialChar: speech,
+      };
+}
+
 class KoreanLevenshtein {
   static const double _defaultDistanceCost = 1.0;
+
+  static const List<SpecialCharToSpeech> _defaultSpecitalChatOption = [
+    SpecialCharToSpeech(
+      specialChar: '%',
+      speech: '퍼센트',
+    ),
+    SpecialCharToSpeech(
+      specialChar: '-',
+      speech: '다시',
+    ),
+  ];
 
   static bool isKoreanChar(String c) {
     int i = c.codeUnitAt(0);
@@ -14,82 +36,103 @@ class KoreanLevenshtein {
         (_moumBegin <= i && i <= _moumEnd));
   }
 
-  String convertTextToKorean(String text) {
-    // 숫자를 한글로 변환하는 함수
-    String numberToKorean(int number) {
-      if (number == 0) {
-        return '영';
-      }
+  static String replaceSpecialCharsWithKorean(
+    String text, {
+    List<SpecialCharToSpeech>? specialCharToSpeech,
+  }) {
+    // 특수 기호를 한글로 변환하는 함수
+    Map<String, String> specialCharsToKorean = {};
 
-      List<String> units = [
-        '',
-        '십',
-        '백',
-        '천',
-        '만',
-        '십만',
-        '백만',
-        '천만',
-        '억',
-        '십억',
-        '백억',
-        '천억',
-        '조',
-        '십조',
-        '백조',
-        '천조',
-        '경',
-        '십경',
-        '백경',
-        '천경'
-      ];
-      List<String> digits = ['영', '일', '이', '삼', '사', '오', '육', '칠', '팔', '구'];
-
-      List<int> numList = [];
-      while (number > 0) {
-        numList.add(number % 10);
-        number ~/= 10;
-      }
-
-      String result = '';
-      for (int i = numList.length - 1; i >= 0; i--) {
-        int digit = numList[i];
-        if (digit != 0) {
-          result += digits[digit];
-          result += units[i];
-        }
-      }
-
-      return result;
+    if (specialCharToSpeech != null && specialCharToSpeech.isNotEmpty) {
+      specialCharsToKorean.addAll(
+        {for (var v in specialCharToSpeech) v.specialChar: v.speech},
+      );
     }
 
-    // 텍스트에서 숫자 부분을 한글로 변환하는 함수
-    String replaceNumberWithKorean(String text) {
-      String result = '';
-      String currentNumber = '';
-      bool isNumber = false;
-
-      for (int i = 0; i < text.length; i++) {
-        if (RegExp(r'[0-9]').hasMatch(text[i])) {
-          currentNumber += text[i];
-          isNumber = true;
-        } else {
-          if (isNumber) {
-            result += numberToKorean(int.parse(currentNumber));
-            currentNumber = '';
-            isNumber = false;
-          }
-          result += text[i];
-        }
+    String result = '';
+    for (int i = 0; i < text.length; i++) {
+      String char = text[i];
+      if (specialCharsToKorean.containsKey(char)) {
+        result += specialCharsToKorean[char] ?? '';
+      } else {
+        result += char;
       }
-      if (isNumber) {
-        result += numberToKorean(int.parse(currentNumber));
-      }
-
-      return result;
     }
 
-    return replaceNumberWithKorean(text);
+    return result;
+  }
+
+  // 숫자를 한글로 변환하는 함수
+  static String _numberToKorean(int number) {
+    if (number == 0) {
+      return '영';
+    }
+
+    List<String> units = [
+      '',
+      '십',
+      '백',
+      '천',
+      '만',
+      '십만',
+      '백만',
+      '천만',
+      '억',
+      '십억',
+      '백억',
+      '천억',
+      '조',
+      '십조',
+      '백조',
+      '천조',
+      '경',
+      '십경',
+      '백경',
+      '천경'
+    ];
+    List<String> digits = ['영', '일', '이', '삼', '사', '오', '육', '칠', '팔', '구'];
+
+    List<int> numList = [];
+    while (number > 0) {
+      numList.add(number % 10);
+      number ~/= 10;
+    }
+
+    String result = '';
+    for (int i = numList.length - 1; i >= 0; i--) {
+      int digit = numList[i];
+      if (digit != 0) {
+        result += digits[digit];
+        result += units[i];
+      }
+    }
+
+    return result;
+  }
+
+  static String replaceNumberWithKorean(String text) {
+    String result = '';
+    String currentNumber = '';
+    bool isNumber = false;
+
+    for (int i = 0; i < text.length; i++) {
+      if (RegExp(r'[0-9]').hasMatch(text[i])) {
+        currentNumber += text[i];
+        isNumber = true;
+      } else {
+        if (isNumber) {
+          result += _numberToKorean(int.parse(currentNumber));
+          currentNumber = '';
+          isNumber = false;
+        }
+        result += text[i];
+      }
+    }
+    if (isNumber) {
+      result += _numberToKorean(int.parse(currentNumber));
+    }
+
+    return result;
   }
 
   static List<String>? decompose(String c) {
@@ -186,21 +229,23 @@ class KoreanLevenshtein {
     String s1,
     String s2, {
     bool replaceNumberToKorean = true,
+    bool replaceSpecialCharToKorean = true,
+    List<SpecialCharToSpeech> specialCharToKorean = _defaultSpecitalChatOption,
+    PhonemeCost? phonemeCost,
   }) {
-    int maxLen = s1.length > s2.length ? s1.length : s2.length;
-    double distance = jamoLevenshteinDistance(
-      s1,
-      s2,
-    );
-    return ((maxLen - distance) / maxLen) * 100;
-  }
+    s1 = s1.replaceAll(' ', '');
+    s2 = s2.replaceAll(' ', '');
 
-  static double jamoSimilarityPercentageWithPhonemeCost(
-    String s1,
-    String s2, {
-    bool replaceNumberToKorean = true,
-    required PhonemeCost phonemeCost,
-  }) {
+    if (replaceNumberToKorean) {
+      s1 = replaceNumberWithKorean(s1);
+      s2 = replaceNumberWithKorean(s2);
+    }
+
+    if (replaceNumberToKorean) {
+      s1 = replaceSpecialCharsWithKorean(s1);
+      s2 = replaceSpecialCharsWithKorean(s2);
+    }
+
     int maxLen = s1.length > s2.length ? s1.length : s2.length;
     double distance = jamoLevenshteinDistance(
       s1,
