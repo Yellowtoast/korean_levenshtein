@@ -1,4 +1,4 @@
-library string_similarity;
+library korean_levenshtein;
 
 export 'src/models/phoneme_cost.dart';
 export 'src/models/special_char_to_speech.dart';
