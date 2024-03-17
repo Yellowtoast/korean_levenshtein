@@ -11,25 +11,42 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+# KoreanLevenshtein Algorithm
+
+The KoreanLevenshtein algorithm is a modification of the traditional Levenshtein distance algorithm, specifically tailored to handle Korean text. It calculates the similarity between two Korean strings by measuring the difference in their characters, accounting for the nuances of the Korean language, such as decomposed phonemes and special characters.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+- **Decomposed Phonemes Handling**: Korean characters consist of decomposed phonemes, namely, chosung, jungsung, and jongsung. The algorithm decomposes each character into its constituent phonemes, allowing for a more accurate comparison.
+  
+- **Numeric Character Replacement**: Optionally replaces numeric characters with their Korean representations, ensuring uniformity in text comparison regardless of numeric presence.
+  
+- **Special Character Replacement**: Optionally replaces special characters with their Korean speech equivalents, facilitating consistent comparison by considering special characters as part of the language.
+  
+- **Customized Phoneme Weights**: Allows users to customize the weights assigned to different phonemes, enabling fine-tuning of the comparison process based on specific requirements.
 
-## Getting started
+## Getting Started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+To use this package, add `korean_levenshtein` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/packages-and-plugins/using-packages).
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+The KoreanLevenshtein algorithm provides functions for text comparison. Below is an example of how to use it:
 
 ```dart
-const like = 'sample';
+import 'package:korean_levenshtein/korean_levenshtein.dart';
+
+void main() {
+  // Example usage of jamoSimilarityPercentage function
+  double similarity = KoreanLevenshtein.jamoSimilarityPercentage(
+    '안녕하세요',
+    '안녕하십니까?',
+    replaceNumberToKorean: true,
+    replaceSpecialCharToKorean: true,
+  );
+
+  print('Similarity Percentage: $similarity');
+}
 ```
 
 ## Additional information
