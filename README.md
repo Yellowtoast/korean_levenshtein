@@ -11,7 +11,7 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
-# KoreanLevenshtein Algorithm
+# KoreanLevenshtein
 
 The KoreanLevenshtein algorithm is a modification of the traditional Levenshtein distance algorithm, specifically tailored to handle Korean text. It calculates the similarity between two Korean strings by measuring the difference in their characters, accounting for the nuances of the Korean language, such as decomposed phonemes and special characters.
 
