@@ -7,17 +7,15 @@ class PhonemeCost {
   final double jungsungCost;
   final double jongsungCost;
 
-  PhonemeCost({
+  const PhonemeCost({
     this.chosungCost = 1.5,
     this.jungsungCost = 1.0,
     this.jongsungCost = 0.5,
-  }) : super() {
-    assert((chosungCost + jungsungCost + jongsungCost) == _totalPhonemeCost,
-        'Total cost weight should be 3.0');
-  }
+  }) : assert((chosungCost + jungsungCost + jongsungCost) == _totalPhonemeCost,
+            'Total cost weight should be 3.0');
 
-  double getCostByIndexOfPhonemeList(int index) {
-    int phonemeIndex = index % _korSyllableNumber;
+  double getCostByOrderOfPhoneme(int orderIndex) {
+    int phonemeIndex = orderIndex % _korSyllableNumber;
 
     if (phonemeIndex == 0) {
       return chosungCost;
