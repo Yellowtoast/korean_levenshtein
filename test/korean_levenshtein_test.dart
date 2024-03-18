@@ -5,6 +5,20 @@ void main() {
   group('KoreanLevenshtein', () {
     test('jamoSimilarityPercentage', () {
       // Test case 1: identical strings
+      String s1 = '산토끼 토끼야 어디를 가느냐';
+      String s2 = '산톡희 톡희야 어디를 가느냐';
+      String s3 = '산독희 독희야 어디를 가느냐';
+
+      double similarity1 = KoreanLevenshtein.jamoSimilarityPercentage(s1, s2,
+          phonemeCost: const PhonemeCost());
+
+      double similarity2 = KoreanLevenshtein.jamoSimilarityPercentage(s1, s3,
+          phonemeCost: const PhonemeCost());
+      expect(similarity1 > similarity2, true);
+    });
+
+    test('jamoSimilarityPercentage', () {
+      // Test case 1: identical strings
       String s1 = '안녕하세요';
       String s2 = '안녕하세요';
       double similarity = KoreanLevenshtein.jamoSimilarityPercentage(s1, s2);
