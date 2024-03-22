@@ -63,7 +63,9 @@ void main() {
       expect(123.numbersToKorean(), "백이십삼");
       expect(1234.numbersToKorean(), "천이백삼십사");
       expect(34500.numbersToKorean(), "삼만사천오백");
-      expect(16000.numbersToKorean(), "만육천");
+      expect(16000.numbersToKorean(), "일만육천");
+      expect(124500.numbersToKorean(), "십이만사천오백");
+      expect(1240000.numbersToKorean(), "백이십사만");
     });
   });
 }
