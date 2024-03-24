@@ -1,7 +1,6 @@
 name: korean_levenshtein
-description: A new Flutter package project.
+description: Calculates similarity between two Korean strings using Levenshtein distance with decomposed phonemes, improving accuracy. 자모음 분리 및 초/종/중성 가중치 적용을 통해 두 한글 문자열 사이의 유사도를 정확하게 측정하는 패키지.
 version: 0.0.1
-publisher: k2852212@gmail.com
 homepage: https://github.com/Yellowtoast/korean_levenshtein
 repository: https://github.com/Yellowtoast/korean_levenshtein
 
